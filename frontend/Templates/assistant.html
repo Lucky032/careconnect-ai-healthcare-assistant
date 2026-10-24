@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant | CareConnect AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="{{ url_for('home') }}">CareConnect <span>AI</span></a>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('book_appointment') }}">Appointments</a>
+        </nav>
+    </header>
+
+    <main class="page-container">
+        <div class="page-heading">
+            <p class="eyebrow">AI-POWERED ASSISTANT</p>
+            <h1>How can we help?</h1>
+            <p>Ask a question or request an appointment in your own words.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, flash_message in messages %}
+                <div class="alert alert-{{ category }}">{{ flash_message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        {% if history %}
+            <section class="response-card" aria-live="polite">
+                <p class="eyebrow">CONVERSATION</p>
+                {% for item in history %}
+                    <div class="form-group">
+                        <p><strong>You</strong></p>
+                        <p class="response-text" style="white-space: pre-line">{{ item.message }}</p>
+                        <p><strong>CareConnect AI</strong></p>
+                        <p class="response-text" style="white-space: pre-line">{{ item.answer }}</p>
+                    </div>
+                    {% if not loop.last %}<hr>{% endif %}
+                {% endfor %}
+            </section>
+        {% elif answer %}
+            <section class="response-card" aria-live="polite">
+                <p class="eyebrow">ASSISTANT RESPONSE</p>
+                <h2>Here's some help</h2>
+                <p class="response-text" style="white-space: pre-line">{{ answer }}</p>
+            </section>
+        {% endif %}
+
+        <form class="form-card" method="POST" action="{{ url_for('assistant') }}">
+            <div class="form-group">
+                <label for="message">Your message</label>
+                <textarea id="message" name="message" rows="4" maxlength="2000" required
+                          placeholder="Example: I'd like an appointment tomorrow at 10 AM.">{{ message or '' }}</textarea>
+            </div>
+            <button class="button" type="submit">Send message</button>
+        </form>
+
+        <section class="notice">
+            Appointments are requested in 10-minute slots between 9:00 AM and 5:00 PM.
+            Requests remain pending until the clinic confirms them. This assistant provides
+            administrative information only and is not a substitute for professional medical advice.
+            Please do not enter detailed medical records or payment information. For emergencies,
+            contact your local emergency services.
+        </section>
+    </main>
+    <footer><p>CareConnect AI · Demonstration only</p></footer>
+</body>
+</html>

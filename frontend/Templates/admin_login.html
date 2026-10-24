@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | CareConnect AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="{{ url_for('home') }}">CareConnect <span>AI</span></a>
+        <nav><a href="{{ url_for('home') }}">Home</a></nav>
+    </header>
+
+    <main class="page-container narrow">
+        <div class="page-heading">
+            <p class="eyebrow">RESTRICTED ACCESS</p>
+            <h1>Admin login</h1>
+            <p>Sign in to manage appointment requests.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <form class="form-card" method="POST" action="{{ url_for('admin_login') }}">
+            <div class="form-group">
+                <label for="password">Admin password</label>
+                <input id="password" name="password" type="password"
+                       autocomplete="current-password" required>
+            </div>
+            <button class="button" type="submit">Sign In</button>
+        </form>
+    </main>
+    <footer><p>CareConnect AI · Demonstration only</p></footer>
+</body>
+</html>

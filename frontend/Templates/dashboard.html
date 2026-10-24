@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | CareConnect AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="{{ url_for('home') }}">CareConnect <span>AI</span></a>
+        <form method="POST" action="{{ url_for('admin_logout') }}">
+            <button class="button button-outline button-small" type="submit">
+                Sign Out
+            </button>
+        </form>
+    </header>
+
+    <main class="page-container wide">
+        <div class="page-heading">
+            <p class="eyebrow">ADMINISTRATION</p>
+            <h1>Appointment dashboard</h1>
+            <p>Review requests and manage their status.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span>Total requests</span><strong>{{ stats.total }}</strong>
+            </article>
+            <article class="stat-card">
+                <span>Pending</span><strong>{{ stats.pending }}</strong>
+            </article>
+            <article class="stat-card">
+                <span>Confirmed</span><strong>{{ stats.confirmed }}</strong>
+            </article>
+            <article class="stat-card">
+                <span>Cancelled</span><strong>{{ stats.cancelled }}</strong>
+            </article>
+        </section>
+
+        <section class="table-card">
+            <h2>Recent appointment requests</h2>
+            {% if appointments %}
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Contact</th>
+                            <th>Date and time</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                        <tr>
+                            <td>{{ appointment.patient_name }}</td>
+                            <td>
+                                {{ appointment.email }}<br>
+                                {{ appointment.phone }}
+                            </td>
+                            <td>
+                                {{ appointment.appointment_date }}<br>
+                                {{ appointment.appointment_time }}
+                            </td>
+                            <td>{{ appointment.reason }}</td>
+                            <td><span class="status-label">{{ appointment.status }}</span></td>
+                            <td>
+                                <form method="POST"
+                                      action="{{ url_for('update_appointment_status', appointment_id=appointment.id) }}">
+                                    <select name="status" aria-label="New appointment status">
+                                        {% for status in ['Pending', 'Confirmed', 'Cancelled'] %}
+                                        <option value="{{ status }}"
+                                            {% if status == appointment.status %}selected{% endif %}>
+                                            {{ status }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button class="button button-small" type="submit">Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p>No appointment requests yet. Submit a test request to see it here.</p>
+            {% endif %}
+        </section>
+
+        <p class="form-note">
+            Use only fictional demonstration data in this assessment prototype.
+        </p>
+    </main>
+    <footer><p>CareConnect AI · Administration prototype</p></footer>
+</body>
+</html>
